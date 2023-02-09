@@ -13,11 +13,16 @@ class PostManager
 
   def all_posts
     @posts
+
   end
 
   def all_posts_by_tag(tag)
-    @posts.select do |post|
-      post.title.include?(tag)
+    @array = []
+    @posts.each do |post|
+      if post.tags.include?(tag)
+        @array << post
+      end
     end
+    return @array
   end
 end

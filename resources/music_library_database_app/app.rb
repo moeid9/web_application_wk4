@@ -16,16 +16,33 @@ class Application < Sinatra::Base
 
   get '/albums' do 
     repo = AlbumRepository.new
-    albums = repo.all
+    @albums = repo.all
 
-    response = albums.map do |album|
-      album.title
-    end.join(', ')
 
-    return response
+    return erb(:albums)
+  end
+
+  get '/albums/new' do 
+    return erb(:new_album)
+  end
+
+  get '/albums/:id' do 
+    repo = AlbumRepository.new
+    artist_repo = ArtistRepository.new
+
+
+    @album = repo.find(params[:id])
+    @artist = artist_repo.find(@album.artist_id)
+
+    return erb(:index)
   end
 
   post '/albums' do
+    if invalid_request_parameters?
+      status 400
+
+      return ''
+    end
     repo = AlbumRepository.new
     new_album = Album.new
     new_album.title = params[:title]
@@ -39,13 +56,17 @@ class Application < Sinatra::Base
 
   get '/artists' do 
     repo = ArtistRepository.new
-    artists = repo.all
+    @artists = repo.all
 
-    response = artists.map do |artist|
-      artist.name
-    end.join(', ')
+    return erb(:artists)
+  end
 
-    return response
+  get '/artists/:id' do 
+    artist_repo = ArtistRepository.new
+
+    @artist = artist_repo.find(params[:id])
+
+    return erb(:art_index)
   end
 
   post '/artists' do
@@ -58,5 +79,15 @@ class Application < Sinatra::Base
     repo.create(new_artist)
 
     return ''
+  end
+
+  def invalid_request_parameters?
+    # Are the params nil?
+    return true if params[:title] == nil || params[:content] == nil
+  
+    # Are they empty strings?
+    return true if params[:title] == "" || params[:content] == ""
+  
+    return false
   end
 end
