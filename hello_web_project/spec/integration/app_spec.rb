@@ -12,7 +12,7 @@ describe Application do
   # class so our tests work.
   let(:app) { Application.new }
 
-  context "GET to /names" do
+  context "GET /names" do
     it "returns 200 OK with the right content" do
       # Send a GET request to /
       # and returns a response object we can test.
@@ -23,6 +23,19 @@ describe Application do
       expect(response.body).to eq('Julia, Mary, Karim')
     end
   end
+
+  context "GET /hello" do
+    it "returns 200 OK with the right content" do
+      # Send a GET request to /
+      # and returns a response object we can test.
+      response = get("/hello")
+
+      # Assert the response status code and body.
+      expect(response.status).to eq(200)
+      expect(response.body).to include('<h1>Hello<h1>')
+    end
+  end
+
   context "POST/" do
     it 'returns 200 OK with right content' do
         response = post("/sort-names?names= Joe, Alice, Zoe, Julia, Kieran")
@@ -32,6 +45,18 @@ describe Application do
     end
   end
 
+  context "GET to /" do
+    it 'contains a h1 title' do
+      response = get('/')
+  
+      expect(response.body).to include('<h1>Hello<h1>')
+    end
+    it 'contains a div' do
+      response = get('/')
+  
+      expect(response.body).to include('<div>')
+    end
+  end
 end
 
 
